@@ -1,0 +1,26 @@
+#########
+#Exclude all
+#########
+*
+!*/
+!.gitignore
+###########################################################################
+##	VIVADO
+###########################################################################
+#########
+#Source files:
+#########
+#Do NOT ignore VHDL, Verilog, block diagrams or EDIF files.
+!*.srcs/**/*.vhd
+!*.srcs/**/*.v
+!*.srcs/**/*.bd
+!*.srcs/**/*.edif
+#########
+#Project files
+#########
+#Do NOT ignore *.xpr files
+!*.xpr
+#########
+#Constraint files
+#########
+!*.srcs/**/*.xdc
