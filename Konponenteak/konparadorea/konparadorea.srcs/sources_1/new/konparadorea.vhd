@@ -24,7 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
-use IEEE.NUMERIC_STD.ALL;
+-- use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -36,25 +36,15 @@ entity konparadorea is
            B : in STD_LOGIC_VECTOR (2 downto 0);
            GT : out STD_LOGIC;
            EQ : out STD_LOGIC;
-           LT : out STD_LOGIC);
+           LO : out STD_LOGIC);
 end konparadorea;
 
 architecture Behavioral of konparadorea is
 
-signal eqv, gtv: std_logic_vector(3 downto 0);
-
 begin
 
-gtv(3) <= '0';
-eqv(3) <= '1';
-
-forloop: for i in 0 to 2 generate
-    eqv(i) <= eqv(i + 1) and (A(i) xnor B(i));
-    gtv(i) <= gtv(i + 1) or (eqv(i + 1) and A(i) and not B(i));
-end generate forloop;
-
-EQ <= eqv(0);
-GT <= gtv(0);
-LT <= not (eqv(0) or gtv(0));
+EQ <= '1' when A=B else '0';
+GT <= '1' when A>B else '0';
+LO <= '1' when A<B else '0';
 
 end Behavioral;

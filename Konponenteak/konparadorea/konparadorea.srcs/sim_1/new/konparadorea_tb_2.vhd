@@ -41,27 +41,29 @@ component konparadorea is
            B : in STD_LOGIC_VECTOR (2 downto 0);
            GT : out STD_LOGIC;
            EQ : out STD_LOGIC;
-           LT : out STD_LOGIC);
+           LO : out STD_LOGIC);
 end component;
 signal GT, EQ, LT: std_logic;
 signal A, B: std_logic_vector(2 downto 0);
+signal sarrerak: std_logic_vector(5 downto 0);
 begin
+
+A <= sarrerak(5 downto 3);
+B <= sarrerak(2 downto 0);
 
 DUT: konparadorea port map (
     A => A,
     B => B,
     GT => GT,
     EQ => EQ,
-    LT => LT
+    LO => LT
 );
 
 stim_proc: process
-variable sarrerak: std_logic_vector(5 downto 0);
 begin
     for i in 0 to 2**6-1 loop
-        sarrerak := std_logic_vector(to_unsigned(i, 6));
-        A <= sarrerak(5 downto 3);
-        B <= sarrerak(2 downto 0);
+        sarrerak <= std_logic_vector(to_unsigned(i, 6));
+        
         wait for 10 ns;
     end loop;
     

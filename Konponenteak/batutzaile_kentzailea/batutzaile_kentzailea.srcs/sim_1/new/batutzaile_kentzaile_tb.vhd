@@ -42,25 +42,27 @@ component batutzaile_kentzaile is
            B : in STD_LOGIC_VECTOR (3 downto 0);
            M : in STD_LOGIC;
            S : out STD_LOGIC_VECTOR (3 downto 0);
+           overflow: out STD_LOGIC;
            Cout : out STD_LOGIC);
 end component;
 
 signal A, B, S: STD_LOGIC_VECTOR(3 downto 0);
-signal M, Cout: STD_LOGIC;
+signal M, Cout, overflow: STD_LOGIC;
 signal SARRERA: STD_LOGIC_VECTOR(8 downto 0);
 
 begin
 
-B <= SARRERA(8 downto 5);
-A <= SARRERA(4 downto 1);
-M <= SARRERA(0);
+M <= SARRERA(8);
+B <= SARRERA(7 downto 4);
+A <= SARRERA(3 downto 0);
 
 dut: batutzaile_kentzaile port map (
     A => A,
     B => B,
     M => M,
     S => S,
-    Cout => Cout
+    Cout => Cout,
+    overflow => overflow
 );
 
 stim_proc: process

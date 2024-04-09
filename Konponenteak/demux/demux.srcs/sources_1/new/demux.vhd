@@ -40,8 +40,10 @@ end demux;
 architecture Behavioral of demux is
 begin
 
-forloop: for I in 0 to 3 generate
-    IRTEERA(I) <= S when SEL = STD_LOGIC_VECTOR(TO_UNSIGNED(I, 2)) else '0';
-end generate forloop;
+irteerak: for I in 0 to 3 generate
+    with sel select
+    IRTEERA(I) <= S when STD_LOGIC_VECTOR(TO_UNSIGNED(I, 2)),
+    '0' when others;
+end generate irteerak;
 
 end Behavioral;

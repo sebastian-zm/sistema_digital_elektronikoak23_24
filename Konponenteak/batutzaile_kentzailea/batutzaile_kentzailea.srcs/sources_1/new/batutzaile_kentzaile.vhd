@@ -59,11 +59,10 @@ C(0) <= M;
 Cout <= C(4);
 overflow <= C(4) xor C(3);
 
-Bsumloop: for ii in 0 to 3 generate
-    Bsum(ii) <= M xor B(ii);
-end generate Bsumloop;
 
 fa: for ii in 0 to 3 generate
+    Bsum(ii) <= M xor B(ii);
+    
     fa_i: full_adder port map (
         A => A(ii),
         B => Bsum(ii),
