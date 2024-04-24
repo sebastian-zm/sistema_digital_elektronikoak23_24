@@ -42,15 +42,15 @@ architecture Behavioral of lehentasun_kod is
 
 begin
 
-with S select
-I <= "1000" when "1-------",
-     "0111" when "01------",
-     "0110" when "001-----",
-     "0101" when "0001----",
-     "0100" when "00001---",
-     "0011" when "000001--",
-     "0010" when "0000001-",
-     "0001" when "00000001",
-     "0000" when others;
+
+I <= "1000" when S(7) = '1' else
+     "0111" when S(6) = '1' else
+     "0110" when S(5) = '1' else
+     "0101" when S(4) = '1' else
+     "0100" when S(3) = '1' else
+     "0011" when S(2) = '1' else
+     "0010" when S(1) = '1' else
+     "0001" when S(0) = '1' else
+     "0000";
 
 end Behavioral;
