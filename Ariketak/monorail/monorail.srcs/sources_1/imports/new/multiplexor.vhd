@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 24.04.2024 14:51:56
+-- Create Date: 28.02.2024 11:09:31
 -- Design Name: 
--- Module Name: edge_detect - Behavioral
+-- Module Name: multiplexor - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,33 +31,22 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity edge_detect is
-    Port ( clk : in STD_LOGIC;
-           rst : in STD_LOGIC;
-           S : in STD_LOGIC;
-           rising : out STD_LOGIC;
-           falling : out STD_LOGIC);
-end edge_detect;
+entity multiplexor is
+    Port ( A : in STD_LOGIC;
+           B : in STD_LOGIC;
+           C : in STD_LOGIC;
+           D : in STD_LOGIC;
+           SEL : in STD_LOGIC_VECTOR (1 downto 0);
+           O: out STD_LOGIC);
+end multiplexor;
 
-architecture Behavioral of edge_detect is
-
-signal s_prev, rising_next, falling_next, clk_b: std_logic;
+architecture Behavioral of multiplexor is
+    
 begin
-
-rising_next <= S and not s_prev;
-falling_next <= not S and s_prev;
-
-process(clk_b, rst)
-begin
-    if rst = '1' then
-        rising <= '0';
-        falling <= '0';
-        s_prev <= S;
-    elsif clk'event and clk = '1' then
-        s_prev <= S;
-        rising <= rising_next;
-        falling <= falling_next;
-    end if;
-end process;
-
+with SEL select
+O <= A when "00",
+     B when "01",
+     C when "10",
+     D when "11",
+     '0' when others;
 end Behavioral;

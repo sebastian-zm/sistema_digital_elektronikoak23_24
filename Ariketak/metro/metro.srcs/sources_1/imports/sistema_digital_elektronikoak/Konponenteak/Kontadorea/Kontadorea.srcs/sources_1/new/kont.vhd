@@ -23,6 +23,8 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.MATH_REAL.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -34,22 +36,26 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 --use UNISIM.VComponents.all;
 
 entity kont is
+    Generic (
+        n: natural := 50_000_000
+    );
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
            enable : in STD_LOGIC;
-           zenb : out STD_LOGIC_VECTOR (15 downto 0));
+           ended : out STD_LOGIC;
+           zenb : out STD_LOGIC_VECTOR (integer(ceil(log2(real(n)))) downto 0));
 end kont;
 
 architecture Behavioral of kont is
 
-constant n: natural := 20_000;
 
-signal s_zenb, s_zenb_next: STD_LOGIC_VECTOR (15 downto 0);
-signal clk_1hz: std_logic;
+signal s_zenb, s_zenb_next: STD_LOGIC_VECTOR (integer(ceil(log2(real(n)))) downto 0);
 begin
 zenb <= s_zenb;
-s_zenb_next <= (others => '0') when s_zenb >= n - 1 or enable = '0' else
-               s_zenb + 1;
+s_zenb_next <= (others => '0') when enable = '0' else
+               s_zenb + 1 when s_zenb < n else
+               s_zenb;
+ended <= '0' when s_zenb < n else '1';
 
 process(clk,rst)
 begin

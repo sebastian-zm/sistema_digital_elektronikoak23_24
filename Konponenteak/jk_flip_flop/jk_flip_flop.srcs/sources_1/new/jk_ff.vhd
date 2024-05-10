@@ -33,6 +33,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity jk_ff is
     Port ( clk : in STD_LOGIC;
+           rst : in STD_LOGIC;
            j : in STD_LOGIC;
            k : in STD_LOGIC;
            q : out STD_LOGIC;
@@ -65,7 +66,10 @@ with jk select
 
 process(clk)
 begin
-    if clk'event and clk = '1' then
+    if rst = '1' then
+        s_q <= '1';
+        s_qbar <= '0';
+    elsif clk'event and clk = '1' then
         s_q <= q_next;
         s_qbar <= qbar_next;
     end if;
