@@ -44,7 +44,7 @@ end frek_zatitzailea;
 
 architecture Behavioral of frek_zatitzailea is
 
-signal s_kont: unsigned(integer(ceil(log2(real(n)))) downto 0);
+signal s_kont: unsigned(integer(ceil(log2(real(n)+1.0)))-1 downto 0);
 signal s_clk: std_logic;
 begin
 
