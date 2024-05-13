@@ -23,7 +23,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
-use IEEE.NUMERIC_STD.ALL;
 use IEEE.MATH_REAL.ALL;
 
 -- Uncomment the following library declaration if using
@@ -37,19 +36,19 @@ use IEEE.MATH_REAL.ALL;
 
 entity kont is
     Generic (
-        n: natural := 50_000_000
+        n: natural := 100_000_000
     );
     Port ( clk : in STD_LOGIC;
            rst : in STD_LOGIC;
            enable : in STD_LOGIC;
            ended : out STD_LOGIC;
-           zenb : out STD_LOGIC_VECTOR (integer(ceil(log2(real(n)))) downto 0));
+           zenb : out STD_LOGIC_VECTOR (integer(ceil(log2(real(n)+0.5))) downto 0));
 end kont;
 
 architecture Behavioral of kont is
 
 
-signal s_zenb, s_zenb_next: STD_LOGIC_VECTOR (integer(ceil(log2(real(n)))) downto 0);
+signal s_zenb, s_zenb_next: STD_LOGIC_VECTOR (integer(ceil(log2(real(n)+0.5))) downto 0);
 begin
 zenb <= s_zenb;
 s_zenb_next <= (others => '0') when enable = '0' else
