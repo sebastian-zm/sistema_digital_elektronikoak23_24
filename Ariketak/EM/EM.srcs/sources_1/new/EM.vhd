@@ -33,19 +33,17 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity EM is
     Port ( atea : in STD_LOGIC;
-           interruptorea : in STD_LOGIC;
+           btn_on: in STD_LOGIC;
+           btn_off: in STD_LOGIC;
+           amaituta : in STD_LOGIC;
            clk : in STD_LOGIC;
            rst : in STD_LOGIC;
            argia : out STD_LOGIC;
+           kont_enable : out STD_LOGIC;
            magnetroia : out STD_LOGIC);
 end EM;
 
 architecture Behavioral of EM is
-
-component lehentasun_kod is
-    Port ( S : in STD_LOGIC_VECTOR (6 downto 0);
-           I : out STD_LOGIC_VECTOR (2 downto 0));
-end component;
 
 type egoera is (irekita, itxita, martxan);
 signal q: egoera;
@@ -53,7 +51,6 @@ signal q1: egoera;
 signal q1_irekita: egoera;
 signal q1_itxita: egoera;
 signal q1_martxan: egoera;
-signal magnetroia_martxan: STD_LOGIC_VECTOR(2 downto 0);
 begin
 
 sek: process(clk, rst)
@@ -68,11 +65,11 @@ end process;
 q1_irekita <= itxita when atea = '1' else irekita;
 
 q1_itxita <= irekita when atea = '0' else
-             martxan when interruptorea = '1' else
+             martxan when btn_on = '1' else
              itxita;
              
 q1_martxan <= irekita when atea = '0' else
-              itxita when interruptorea = '0' else
+              itxita when btn_off = '1' or amaituta = '1' else
               martxan;
 
 
@@ -84,7 +81,9 @@ with q select
 
 magnetroia <= '1' when q = martxan else
               '0';
-argia <= '1' when q = irekita or q = martxan else
-         '0';
+argia <= '0' when q = itxita else
+         '1';
+kont_enable <= '1' when q = martxan else
+               '0';
 
 end Behavioral;

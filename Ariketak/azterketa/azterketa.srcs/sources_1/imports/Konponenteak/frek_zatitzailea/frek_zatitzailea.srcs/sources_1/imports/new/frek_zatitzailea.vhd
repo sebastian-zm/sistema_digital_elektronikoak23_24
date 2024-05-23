@@ -24,8 +24,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
-use IEEE.STD_LOGIC_ARITH.ALL;
-use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use IEEE.NUMERIC_STD.ALL;
 use IEEE.MATH_REAL.ALL;
 
 -- Uncomment the following library declaration if instantiating
@@ -45,7 +44,7 @@ end frek_zatitzailea;
 
 architecture Behavioral of frek_zatitzailea is
 
-signal s_kont: std_logic_vector(integer(ceil(log2(real(n)+1.0)))-1 downto 0);
+signal s_kont: unsigned(integer(ceil(log2(real(n)+1.0)))-1 downto 0);
 signal s_clk: std_logic;
 begin
 
@@ -54,14 +53,14 @@ clk_berri <= s_clk;
 process(clk,rst)
 begin
 if (rst = '1') then
-    s_kont <= (others => '0');
+    s_kont <= to_unsigned(0, s_kont'length);
     s_clk <= '0';
 elsif (clk'event and clk = '1') then
     if (enable = '0') then
-        s_kont <= (others => '0');
+        s_kont <= to_unsigned(0, s_kont'length);
         s_clk <= '0';
-    elsif (s_kont >= n - 1) then
-        s_kont <= (others => '0');
+    elsif (s_kont >= n - 1) then --     elsif (s_kont >= n - 1) then
+        s_kont <= to_unsigned(0, s_kont'length);
         s_clk <= not s_clk;
     else
         s_kont <= s_kont + 1;

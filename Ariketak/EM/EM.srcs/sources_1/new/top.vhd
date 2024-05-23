@@ -48,10 +48,13 @@ end top;
 architecture Behavioral of top is
 component EM is
     Port ( atea : in STD_LOGIC;
-           interruptorea : in STD_LOGIC;
+           btn_on: in STD_LOGIC;
+           btn_off: in STD_LOGIC;
+           amaituta : in STD_LOGIC;
            clk : in STD_LOGIC;
            rst : in STD_LOGIC;
            argia : out STD_LOGIC;
+           kont_enable : out STD_LOGIC;
            magnetroia : out STD_LOGIC);
 end component;
 component lehentasun_kod is
@@ -63,37 +66,20 @@ component frek_zatitzailea is
            rst : in STD_LOGIC;
            clk_berri : out STD_LOGIC);
 end component;
-component kronometro is
-    Port ( denbora : in STD_LOGIC_VECTOR (3 downto 0);
-           set : in STD_LOGIC;
-           rst : in STD_LOGIC;
-           pause: in STD_LOGIC;
-           bukatuta: out STD_LOGIC;
-           clk : in STD_LOGIC;
-           denbora_out : out STD_LOGIC_VECTOR (3 downto 0));
-end component;
+
 component zazpi_segmentu is
     Port ( bin : in STD_LOGIC_VECTOR (3 downto 0);
            display : in STD_LOGIC_VECTOR (3 downto 0);
            seg : out STD_LOGIC_VECTOR (6 downto 0);
            an : out STD_LOGIC_VECTOR (3 downto 0));
 end component;
-signal s_interruptorea: STD_LOGIC;
-signal s_clk_1hz: STD_LOGIC;
-signal s_kron_rst: STD_LOGIC;
-signal s_kron_bukatuta: STD_LOGIC;
-signal s_em_rst: STD_LOGIC;
-signal s_frek_zat_rst: STD_LOGIC;
-signal s_denbora: STD_LOGIC_VECTOR (3 downto 0);
-signal s_programa: STD_LOGIC_VECTOR (2 downto 0);
-signal s_on: STD_LOGIC;
+signal amaitua, s_magnetroia, clk_1hz: std_logic;
+signal s_programa : std_logic_vector(2 downto 0);
+signal zenb : std_logic_vector(3 downto 0);
 begin
 
-s_em_rst <= rst or s_kron_bukatuta;
-s_kron_rst <= rst or not s_on;
-s_frek_zat_rst <= rst or btn_on;
 forg: for ii in 0 to 2 generate
-    magnetroia(ii) <= s_programa(ii) and s_on;
+    magnetroia(ii) <= s_programa(ii) and s_magnetroia;
 end generate forg;
 lk: lehentasun_kod port map (
     S => programa,
@@ -102,46 +88,23 @@ lk: lehentasun_kod port map (
 seg7: zazpi_segmentu port map (
     seg => seg,
     an => an,
-    bin => s_denbora,
+    bin => zenb,
     display => "0001"
 );
-kron: kronometro port map (
-    denbora => denbora,
-    set => btn_on,
-    pause => '0',
-    rst => s_kron_rst,
-    clk => s_clk_1hz,
-    bukatuta => s_kron_bukatuta,
-    denbora_out => s_denbora
-);
-
 frek_zat: frek_zatitzailea port map (
     clk => clk,
-    rst => s_frek_zat_rst,
-    clk_berri => s_clk_1hz
+    rst => rst,
+    clk_berri => clk_1hz
 );
 ema: EM port map (
     atea => atea,
-    interruptorea => s_interruptorea,
+    btn_on => btn_on,
+    btn_off => btn_off,
     clk => clk,
-    rst => s_em_rst,
+    rst => rst,
+    amaituta => amaitua,
     argia => argia,
-    magnetroia => s_on
+    magnetroia => s_magnetroia
 );
-
-process(s_em_rst, clk)
-begin
-if s_em_rst = '1' then
-    s_interruptorea <= '0';
-elsif clk'event and clk = '1' then
-    if btn_off = '1' or btn_on = '1' then
-        s_interruptorea <= not btn_off;
-    else
-        s_interruptorea <= s_interruptorea;
-    end if;
-else
-    s_interruptorea <= s_interruptorea;
-end if;
-end process;
 
 end Behavioral;
