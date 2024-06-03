@@ -39,8 +39,8 @@ entity top is
            BTNL : in STD_LOGIC;
            clk : in STD_LOGIC;
            rst : in STD_LOGIC;
-           RxD : in STD_LOGIC;
-           TxD : out STD_LOGIC;
+           RxD : out STD_LOGIC;
+           TxD : in STD_LOGIC;
            inp: out STD_LOGIC_VECTOR (5 downto 0));
 end top;
 
@@ -86,7 +86,7 @@ em: Egoera_Makina port map (
     BTNR => BTNR,
     BTNC => BTNC,
     BTNL => BTNL,
-    clk => clk,
+    clk => s_16x_baud,
     rst => rst,
     tx_complete => Tx_complete,
     data_out => data_in,
@@ -95,9 +95,9 @@ em: Egoera_Makina port map (
 tx: kcuart_tx port map (
     data_in => data_in,
     send_character => send_character,
-    en_16_x_baud => s_16x_baud,
-    clk => clk,
-    serial_out => TxD,
+    en_16_x_baud => '1',
+    clk => s_16x_baud,
+    serial_out => RxD,
     Tx_complete => Tx_complete
 );
 

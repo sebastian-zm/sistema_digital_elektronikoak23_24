@@ -44,17 +44,19 @@ signal O_next: std_logic;
 
 begin
 
-kont_next <= 1 when kont = 217 else
+kont_next <= 1 when kont >= 217 else
              kont + 1;
-with kont select
-    O_next <= '1' when 54,
-              '1' when 108,
-              '1' when 163,
-              '1' when 217,
-              '0' when others;
+O_next <= '1' when kont < 27 else
+          '0' when kont < 54 else
+          '1' when kont < 81 else
+          '0' when kont < 108 else
+          '1' when kont < 135 else
+          '0' when kont < 163 else
+          '1' when kont < 190 else
+          '0';
 
 
-process
+process(clk,rst)
 begin
 if rst = '1' then
     kont <= 0;

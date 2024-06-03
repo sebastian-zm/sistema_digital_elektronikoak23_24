@@ -46,29 +46,29 @@ end Egoera_Makina;
  
 architecture Behavioral of Egoera_Makina is
  
-type egoera is (HASIERA, AURRERA, ATZERA, ESKUINERA, EZKERRERA, GELDITU);
+type egoera is (HASIERA, AURRERA, AURRERA_ITX, ATZERA, ATZERA_ITX, ESKUINERA, ESKUINERA_ITX, EZKERRERA, EZKERRERA_ITX, GELDITU, AMAITU, AMAITU_ITX);
 signal oraingoa, hurrengoa: egoera;
  
 begin
  
 sek: process (rst, clk, hurrengoa)
 begin
-if rst='1' then --memoria
-    oraingoa<=HASIERA;
+    if rst='1' then --memoria
+        oraingoa<=HASIERA;
     elsif clk' event and clk='1' then
-    oraingoa<=hurrengoa;
-end if;
+        oraingoa<=hurrengoa;
+    end if;
 end process;
  
 konb: process(oraingoa, BTNR, BTNL, BTND, BTNU, tx_complete)
 begin
 
 data_out<="00000000";
-send_char<='1';
+send_char<='0';
+hurrengoa<=oraingoa;
 case oraingoa is
+
     when HASIERA=>
-        send_char<='0';
- 
         if (BTNU='1') then
             hurrengoa<=AURRERA;
         elsif (BTND='1') then
@@ -77,69 +77,79 @@ case oraingoa is
             hurrengoa<=ESKUINERA;
         elsif (BTNL='1') then
             hurrengoa<=EZKERRERA;
-        elsif (tx_complete='1') then
-            hurrengoa<=HASIERA;
-       elsif (BTNC='1') then
-            hurrengoa<= GELDITU;
-        else
-            hurrengoa<=HASIERA;
+        elsif (BTNC='1') then
+            hurrengoa<= AMAITU;
         end if;
+
     when AURRERA=>
+        send_char <= '1';
         data_out<="01010111";--W en la tabla ASCII
-       if (BTNC='1') then 
-            hurrengoa<= GELDITU;
-       end if;
-       if (tx_complete='1') then
-            hurrengoa<=HASIERA;
-        else
-            hurrengoa<=AURRERA;
+        if tx_complete = '1' then
+            hurrengoa<=AURRERA_ITX;
+        end if;
+
+    when AURRERA_ITX=>
+        if BTNU='0' then
+            hurrengoa <= GELDITU;
         end if;
  
     when ATZERA=>
+        send_char <= '1';
         data_out<="01010011";--S en la tabla ASCII
- 
- 
-        if (tx_complete='1') then
-            hurrengoa<=HASIERA;
-        else
-            hurrengoa<=ATZERA;
+        if tx_complete = '1' then
+            hurrengoa<=ATZERA_ITX;
         end if;
- 
-       if (BTNC='1') then 
-            hurrengoa<= GELDITU;
-       end if;
+
+    when ATZERA_ITX=>
+        if (BTND='0') then
+            hurrengoa<=GELDITU;
+        end if;
+
     when ESKUINERA=>
+        send_char <= '1';
         data_out<="01000100";--D en la tabla ASCII
- 
-        if (tx_complete='1') then
-            hurrengoa<=HASIERA;
-        else
-            hurrengoa<=ESKUINERA;
+        if tx_complete = '1' then
+            hurrengoa<=ESKUINERA_ITX;
         end if;
- 
-       if (BTNC='1') then 
-            hurrengoa<= GELDITU;
-       end if;
- 
+
+    when ESKUINERA_ITX=>
+        if (BTNR='0') then
+            hurrengoa<=GELDITU;
+        end if;
+
     when EZKERRERA=>
+        send_char <= '1';
         data_out<="01000001";--A en la tabla ASCII
-        if (tx_complete='1') then
-            hurrengoa<=HASIERA;
-        else
-            hurrengoa<=EZKERRERA;
+        if tx_complete = '1' then
+            hurrengoa<=EZKERRERA_ITX;
         end if;
- 
-       if (BTNC='1') then 
-            hurrengoa<= GELDITU;
-       end if;
+
+    when EZKERRERA_ITX=>
+        if (BTNL='0') then
+            hurrengoa<=GELDITU;
+        end if;
  
     when GELDITU=>
-        if tx_complete='1'then
-            hurrengoa<=hasiera;
+        send_char <= '1';
+        data_out<="01010000";--P en la tabla ASCII
+        if tx_complete = '1' then
+            hurrengoa<=HASIERA;
+        end if;
+ 
+    when AMAITU=>
+        send_char<='1';
+        data_out<="01000010";--B en la tabla ASCII
+        if tx_complete = '1' then
+            hurrengoa<=AMAITU_ITX;
+        end if;
+
+    when AMAITU_ITX=>
+        if (BTNC='0') then
+            hurrengoa<=HASIERA;
         end if;
  
     when OTHERS=>
-            hurrengoa<=HASIERA;
+        hurrengoa<=HASIERA;
  
 end case;
 end process;
