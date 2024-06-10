@@ -41,13 +41,15 @@ entity top is
            rst : in STD_LOGIC;
            RxD : out STD_LOGIC;
            TxD : in STD_LOGIC;
-           inp: out STD_LOGIC_VECTOR (5 downto 0));
+           inp: out STD_LOGIC_VECTOR (5 downto 0);
+           seg : out STD_LOGIC_VECTOR (6 downto 0);
+           an : out STD_LOGIC_VECTOR (3 downto 0));
 end top;
 
 architecture Behavioral of top is
 signal btn_bin: std_logic_vector(1 downto 0);
-signal send_character, s_16x_baud, Tx_complete: std_logic;
-signal data_in: std_logic_vector(7 downto 0);
+signal send_character, s_16x_baud, Tx_complete, data_strobe: std_logic;
+signal data_in, data_out: std_logic_vector(7 downto 0);
 component kcuart_tx is
     Port (        data_in : in std_logic_vector(7 downto 0);
            send_character : in std_logic;
@@ -73,7 +75,37 @@ component baud_16x is
            rst : in STD_LOGIC;
            O : out STD_LOGIC);
 end component;
+component kcuart_rx is
+    Port (            serial_in : in std_logic;  
+                 data_out : out std_logic_vector(7 downto 0);
+              data_strobe : out std_logic;
+             en_16_x_baud : in std_logic;
+                      clk : in std_logic);
+end component;
+component Egoera_Makina2 is
+    Port ( clk : in STD_LOGIC;
+           rst : in STD_LOGIC;
+           data_in : in STD_LOGIC_VECTOR (7 downto 0);
+           data_strobe : in STD_LOGIC;
+           seg : out STD_LOGIC_VECTOR (6 downto 0);
+           an : out STD_LOGIC_VECTOR (3 downto 0));
+end component;
 begin
+em2: Egoera_Makina2 port map (
+    clk => s_16x_baud,
+    rst => rst,
+    data_strobe => data_strobe,
+    data_in => data_in,
+    seg => seg,
+    an => an
+);
+rx: kcuart_rx port map (
+    serial_in => TxD,
+    en_16_x_baud => '1',
+    clk => s_16x_baud,
+    data_strobe => data_strobe,
+    data_out => data_in
+);
 inp <= (others => 'Z');
 baud_x16: baud_16x port map (
     clk => clk,
@@ -89,11 +121,11 @@ em: Egoera_Makina port map (
     clk => s_16x_baud,
     rst => rst,
     tx_complete => Tx_complete,
-    data_out => data_in,
+    data_out => data_out,
     send_char => send_character
 );
 tx: kcuart_tx port map (
-    data_in => data_in,
+    data_in => data_out,
     send_character => send_character,
     en_16_x_baud => '1',
     clk => s_16x_baud,
